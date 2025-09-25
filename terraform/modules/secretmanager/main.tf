@@ -18,6 +18,10 @@ module "secret-manager" {
     {
       name        = "strava-access-token"
       secret_data = var.access_token
+    },
+    {
+      name        = "postgres-service-account-pwd"
+      secret_data = var.dev_sa_password
     }
   ]
 }

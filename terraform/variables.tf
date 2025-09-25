@@ -64,6 +64,6 @@ variable "dev_sa_password" {
 }
 
 variable "whitelisted_ip" {
-  type = string
+  type        = string
   description = "IP Address to access DBs from"
 }

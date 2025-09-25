@@ -27,3 +27,8 @@ variable "access_token" {
   sensitive   = true
 }
 
+variable "dev_sa_password" {
+  type        = string
+  description = "Password for Dev DB instance service account"
+  sensitive   = true
+}

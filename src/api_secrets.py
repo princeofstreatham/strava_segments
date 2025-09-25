@@ -6,9 +6,8 @@ import utils
 from dotenv import load_dotenv
 from google.cloud import secretmanager
 
-def get_auth_code(client_id: str,
-                  redirect_uri: str,
-                  auth_code_scope: str) -> str:
+
+def get_auth_code(client_id: str, redirect_uri: str, auth_code_scope: str) -> str:
     """Obtains an authorisation code from Strava
 
     Args:
@@ -19,25 +18,30 @@ def get_auth_code(client_id: str,
     Returns:
         str: Authorisation Code
     """
-     
-    auth_url = requests.Request(
-        "GET",
-        "http://www.strava.com/oauth/authorize",
-        params = {
-            "client_id": client_id,
-            "response_type": "code",
-            "redirect_uri": redirect_uri,
-            "approval_prompt": "auto",
-            "scope": auth_code_scope
-        }
-    ).prepare().url()
+
+    auth_url = (
+        requests.Request(
+            "GET",
+            "http://www.strava.com/oauth/authorize",
+            params={
+                "client_id": client_id,
+                "response_type": "code",
+                "redirect_uri": redirect_uri,
+                "approval_prompt": "auto",
+                "scope": auth_code_scope,
+            },
+        )
+        .prepare()
+        .url()
+    )
 
     print("Authenticate with Strava in Browser")
     webbrowser.open(auth_url)
 
     auth_code = input(
-        "After logging in, paste the 'code' from the redirected URL here: ").strip()
-    
+        "After logging in, paste the 'code' from the redirected URL here: "
+    ).strip()
+
     return auth_code
 
 
@@ -86,7 +90,7 @@ def refresh_access_token(client_id: str, client_secret: str, refresh_token: str)
         "client_id": client_id,
         "client_secret": client_secret,
         "grant_type": "refresh_token",
-        "refresh_token": refresh_token
+        "refresh_token": refresh_token,
     }
 
     try:
@@ -98,32 +102,25 @@ def refresh_access_token(client_id: str, client_secret: str, refresh_token: str)
     data = response.json()
     return data
 
-    
+
 if __name__ == "__main__":
 
     """Step 1: Setup"""
-    repo_root = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), ".."))
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     env_file = os.path.join(repo_root, ".env.dev")
 
     load_dotenv(env_file)
 
     """Step 2: Refresh Token"""
     access_token = refresh_access_token(
-        os.getenv("CLIENT_ID"),
-        os.getenv("CLIENT_SECRET"),
-        os.getenv("REFRESH_TOKEN")
+        os.getenv("CLIENT_ID"), os.getenv("CLIENT_SECRET"), os.getenv("REFRESH_TOKEN")
     )
 
     refresh_token = access_token.pop("refresh_token")
 
     """Step 3: Push to Secret Manager"""
     utils.put_secret(
-        os.getenv('GCP_PROJECT_ID'),
-        "strava-access-token", 
-        json.dumps(access_token))
-    
-    utils.put_secret(
-        os.getenv('GCP_PROJECT_ID'),
-        "strava-refresh-token", refresh_token)
-    
+        os.getenv("GCP_PROJECT_ID"), "strava-access-token", json.dumps(access_token)
+    )
+
+    utils.put_secret(os.getenv("GCP_PROJECT_ID"), "strava-refresh-token", refresh_token)

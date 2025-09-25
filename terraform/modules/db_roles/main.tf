@@ -31,7 +31,7 @@ resource "postgresql_grant" "dev_service_account_grant" {
   schema      = "dev"
   objects     = ["bounding_boxes"]
   privileges  = ["SELECT", "INSERT", "UPDATE"]
-  depends_on = [postgresql_role.dev_service_account]
+  depends_on  = [postgresql_role.dev_service_account]
 }
 
 resource "postgresql_default_privileges" "dev_service_account_defaults" {

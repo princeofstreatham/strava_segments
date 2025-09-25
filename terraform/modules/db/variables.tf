@@ -11,7 +11,7 @@ variable "dbs" {
 }
 
 variable "whitelisted_ip" {
-  type = string
+  type        = string
   description = "IP Address to access DBs from"
 }
 

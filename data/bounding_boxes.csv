@@ -1,4 +1,4 @@
-sw_latitude,sw_longitude,ne_latitude,ne_longitude,status
+sw_longitude,sw_latitude,ne_longitude,ne_latitude,status
 -1.15,51.45,-1.14,51.46,pending
 -1.14,51.45,-1.13,51.46,pending
 -1.13,51.45,-1.1199999999999999,51.46,pending

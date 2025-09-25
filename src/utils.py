@@ -1,6 +1,7 @@
 from google.cloud import secretmanager, storage
 import json
 
+
 def get_secret(project_id: str, secret_name: str):
     """Returns latest version of a secret stored in Google Secret MAnager
 
@@ -9,7 +10,7 @@ def get_secret(project_id: str, secret_name: str):
         secret_name (str): Name of your secret
 
     Returns:
-        str: secret 
+        str: secret
     """
     client = secretmanager.SecretManagerServiceClient()
     secret_url = f"projects/{project_id}/secrets/{secret_name}/versions/latest"
@@ -38,8 +39,6 @@ def put_secret(project_id: str, secret_name: str, secret_value: str):
     print(f"Added secret version: {response.name}")
 
 
-
-
 def upload_blob(bucket_name: str, source_file_path: str, destination_blob_name: str):
     """Uploads a file to a Google Cloud Storage bucket
 
@@ -54,7 +53,7 @@ def upload_blob(bucket_name: str, source_file_path: str, destination_blob_name: 
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(destination_blob_name)
-    blob.upload_from_filename(source_file_name)
+    blob.upload_from_filename(source_file_path)
 
 
 def load_json(file_path: str):
