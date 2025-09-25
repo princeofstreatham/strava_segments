@@ -1,0 +1,18 @@
+get_segments:
+  endpoint: https://api.spotify.com/v1/me/tracks
+  params:
+    market: UK
+    limit: 50
+    offset: 0
+
+
+[51.525,1.125]
+[51.550,1.150]
+51.484688°N, 1.087539°
+
+Longitude, 
+-1.1, -1 (start west, head east)
+Latitude
+51.5, 51.6 (start south, head north)
+
+increment by 0.1
