@@ -1,4 +1,9 @@
-variable "dev_sa_password" {
+variable "env" {
+  type        = string
+  description = "Development Environment"
+}
+
+variable "sa_password" {
   type        = string
   description = "Password for Dev DB instance service account"
   sensitive   = true

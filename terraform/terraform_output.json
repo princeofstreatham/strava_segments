@@ -1,0 +1,17 @@
+{
+  "bucket_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "segment_hunter__dev"
+  },
+  "db_host": {
+    "sensitive": false,
+    "type": "string",
+    "value": "35.189.75.58"
+  },
+  "db_service_account_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "service_account"
+  }
+}

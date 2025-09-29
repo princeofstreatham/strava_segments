@@ -1,6 +1,6 @@
 resource "google_service_account" "segment_hunter_service_account" {
-  account_id   = "segment-hunter-servie-account"
-  display_name = "Segment Hunter Service Account"
+  account_id   = "segment-hunter-sa--${var.env}"
+  display_name = "Segment Hunter Service Account - ${var.env}"
   project      = var.project_id
 }
 

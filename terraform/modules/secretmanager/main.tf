@@ -4,24 +4,24 @@ module "secret-manager" {
   project_id = var.project_id
   secrets = [
     {
-      name        = "strava-client-secret"
+      name        = "strava-client-secret--${var.env}"
       secret_data = var.client_secret
     },
     {
-      name        = "strava-client-id"
+      name        = "strava-client-id--${var.env}"
       secret_data = var.client_id
     },
     {
-      name        = "strava-refresh-token"
+      name        = "strava-refresh-token--${var.env}"
       secret_data = var.refresh_token
     },
     {
-      name        = "strava-access-token"
+      name        = "strava-access-token--${var.env}"
       secret_data = var.access_token
     },
     {
-      name        = "postgres-service-account-pwd"
-      secret_data = var.dev_sa_password
+      name        = "postgres-service-account-pwd--${var.env}"
+      secret_data = var.sa_password
     }
   ]
 }

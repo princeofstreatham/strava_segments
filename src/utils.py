@@ -39,8 +39,8 @@ def put_secret(project_id: str, secret_name: str, secret_value: str):
     print(f"Added secret version: {response.name}")
 
 
-def upload_blob(bucket_name: str, source_file_path: str, destination_blob_name: str):
-    """Uploads a file to a Google Cloud Storage bucket
+def upload_blob_from_path(bucket_name: str, source_file_path: str, destination_blob_name: str):
+    """Uploads a file to a Google Cloud Storage bucket given a file path
 
     Args:
         bucket_name (str): GCS bucket name
@@ -54,6 +54,23 @@ def upload_blob(bucket_name: str, source_file_path: str, destination_blob_name: 
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(destination_blob_name)
     blob.upload_from_filename(source_file_path)
+
+
+def upload_blob_from_string(bucket_name: str, string_blob: str, destination_blob_name: str):
+    """Uploads a file to a Google Cloud Storage bucket given a string
+
+    Args:
+        bucket_name (str): GCS bucket name
+        string_blob (str): String representation of your blob
+        destination_blob_name (str): Name of the blob to save in GCS
+
+    Returns:
+        None
+    """
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(destination_blob_name)
+    blob.upload_from_string(string_blob, content_type="application/json")
 
 
 def load_json(file_path: str):

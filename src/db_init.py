@@ -1,5 +1,6 @@
 import os
 import utils
+import json
 import psycopg2
 from dotenv import load_dotenv
 
@@ -14,18 +15,23 @@ if __name__ == "__main__":
     """Step 1: Setup"""
     repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     env_path = os.path.join(repo_root, ".env.dev")
+    tf_outputs_path = os.path.join(repo_root, "terraform", "terraform_outputs.json")
 
     load_dotenv(env_path)
+    gcp_project_id = os.getenv("GCP_PROJECT_ID")
+
+    with open(tf_outputs_path) as file:
+        tf_outputs = json.load(file)
 
     db_params = {
-        "host": os.getenv("PG_HOST"),
-        "dbname": os.getenv("PG_DATABASE"),
-        "user": os.getenv("PG_USER"),
-        "password": os.getenv("PG_PASSWORD"),
-        "port": os.getenv("PG_PORT"),
+        "host": tf_outputs["db_host"]["value"],
+        "dbname": os.getenv("PG_DATABASE", "postgres"),
+        "user": tf_outputs["db_service_account_name"]["value"],
+        "password": utils.get_secret(gcp_project_id, "postgres-service-account-pwd--dev"),
+        "port": os.getenv("PG_PORT", "5432"),
     }
 
-    db_table = "dev.bounding_boxes"
+    db_table = "public.bounding_boxes"
     csv_path = os.path.join(repo_root, "data", "bounding_boxes.csv")
 
     """Step 2: Initialise DB"""

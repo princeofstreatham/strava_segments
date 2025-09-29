@@ -32,19 +32,11 @@ variable "access_token" {
   description = "Strava User Access Token"
   sensitive   = true
 }
-
-variable "dbs" {
-  type = map(object({
-    tier      = string
-    disk_size = number
-    public    = bool
-  }))
-  description = "Map or args to pass to Google Cloud SQL provider"
-  default = {
-    dev  = { tier = "db-f1-micro", disk_size = 10, disk_type = "PD_HDD", public = true }
-    prod = { tier = "db-g1-small", disk_size = 5, disk_type = "PD_SSD", public = true }
-  }
+variable "tier" {
+  type        = string
+  description = "Cloud SQL database instance tier"
 }
+
 
 variable "db_password" {
   type        = string
@@ -57,13 +49,24 @@ variable "db_user" {
   type        = string
 }
 
-variable "dev_sa_password" {
+variable "sa_password" {
   type        = string
-  description = "Password for Dev DB instance service account"
+  description = "Password for DB instance service account"
   sensitive   = true
+}
+
+variable "disk_size" {
+  type        = string
+  description = "Amount of DB Storage"
+  default     = 10
 }
 
 variable "whitelisted_ip" {
   type        = string
   description = "IP Address to access DBs from"
+}
+
+variable "db_root_user_password" {
+  type        = string
+  description = "Password for new root user"
 }

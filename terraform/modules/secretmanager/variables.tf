@@ -1,3 +1,8 @@
+variable "env" {
+  type        = string
+  description = "Development environment for secrets"
+}
+
 variable "project_id" {
   type        = string
   description = "GCP Project ID"
@@ -27,8 +32,8 @@ variable "access_token" {
   sensitive   = true
 }
 
-variable "dev_sa_password" {
+variable "sa_password" {
   type        = string
-  description = "Password for Dev DB instance service account"
+  description = "Password for DB service account"
   sensitive   = true
 }

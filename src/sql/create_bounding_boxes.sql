@@ -1,6 +1,4 @@
-CREATE SCHEMA IF NOT EXISTS dev;
-
-CREATE TABLE IF NOT EXISTS dev.bounding_boxes (
+CREATE TABLE IF NOT EXISTS public.bounding_boxes (
     id SERIAL PRIMARY KEY,
     sw_latitude FLOAT,
     sw_longitude FLOAT,
