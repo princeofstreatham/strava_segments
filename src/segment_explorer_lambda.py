@@ -1,5 +1,6 @@
 import os
 import sys
+import base64
 import json
 import time
 import logging
@@ -163,60 +164,37 @@ def update_bounding_box_status(db_params: Dict[str, Any], bbox_id: int, status: 
         raise
 
 
-def main():
+def handle_message(message_data: Dict[str, Any], trace_id: str):
     config = load_config()
     tf_outputs = config["tf_outputs"]
     db_params = config["db_params"]
     gcp_project_id = config["gcp_project_id"]
-    
+
     strava_token = refresh_strava_token(gcp_project_id)
     access_token = strava_token["access_token"]
-    
-    subscription_id = tf_outputs['pubsub_topic_sub']['value']
-    subscriber, subscription_path, messages = fetch_pubsub_messages(gcp_project_id, subscription_id)
-    
-    if not messages:
-        logger.info("No messages available.")
-        return
-    
-    for msg in messages:
-        try:
-            message_data = json.loads(msg.message.data.decode('utf-8'))
-            trace_id = message_data['id'] or str(uuid.uuid4)
-            logger.info(f"[{trace_id}] Processing message...")
-            coordinates = [message_data[key] for key in ["sw_latitude","sw_longitude","ne_latitude","ne_longitude"]]
-            logger.debug(f"[{trace_id}] Coordinates: {coordinates}")
 
-            segment_data = requests_get_with_retry(
-                "https://www.strava.com/api/v3/segments/explore",
-                headers={"accept": "application/json", "authorization": f"Bearer {access_token}"},
-                params={"bounds": ",".join(map(str, coordinates)), "activity_type": "riding"},
-                trace_id=trace_id
-            )
+    coordinates = [message_data[key] for key in ["sw_latitude", "sw_longitude", "ne_latitude", "ne_longitude"]]
+    logger.debug(f"[{trace_id}] Coordinates: {coordinates}")
 
-            segment_data["time_fetched"] = int(time.time())
-            file_name = f"[{','.join(map(str, coordinates))}]__{segment_data['time_fetched']}.json"
-            utils.upload_blob_from_string(tf_outputs["bucket_name"]["value"], json.dumps(segment_data), file_name)
-            logger.info(f"[{trace_id}] Uploaded segment data to {file_name}")
+    segment_data = fetch_segments_from_strava(coordinates, access_token, trace_id)
 
-            query = sql.SQL("UPDATE {schema}.{table} SET status = %s WHERE id = %s").format(
-                schema=sql.Identifier("public"), table=sql.Identifier("bounding_boxes")
-            )
-            with psycopg2.connect(**db_params) as conn:
-                with conn.cursor() as cur:
-                    cur.execute(query, ("fetched", message_data["id"]))
-                    conn.commit()
-            logger.info(f"[{trace_id}] Updated bounding box {message_data['id']} status to fetched")
+    file_name = f"[{','.join(map(str, coordinates))}]__{segment_data['time_fetched']}.json"
+    utils.upload_blob_from_string(tf_outputs["bucket_name"]["value"], json.dumps(segment_data), file_name)
+    logger.info(f"[{trace_id}] Uploaded segment data to {file_name}")
 
-            subscriber.acknowledge(request={"subscription": subscription_path, "ack_ids": [msg.ack_id]})
-            logger.info(f"[{trace_id}] Acknowledged message")
-            metrics["messages_processed"] += 1
+    update_bounding_box_status(db_params, message_data["id"], "fetched", trace_id)
+    logger.info(f"[{trace_id}] Successfully processed bounding box {message_data['id']}")
 
-        except Exception as e:
-            logger.exception(f"[{trace_id}] Failed to process message: {e}")
-            metrics["messages_failed"] += 1
 
-    logger.info(f"Metrics summary: {metrics}")
 
-if __name__ == "__main__":
-    main()
+def process_pubsub_event(event, context):
+    """Entry point for Google Cloud Function (Pub/Sub trigger)."""
+    logger.info("Pub/Sub event received")
+    try:
+        message_data = json.loads(base64.b64decode(event["data"]).decode("utf-8"))
+        trace_id = message_data.get("id") or str(uuid.uuid4())
+        handle_message(message_data, trace_id)
+        logger.info(f"[{trace_id}] Pub/Sub message processed successfully")
+    except Exception as e:
+        logger.exception(f"Failed to process Pub/Sub message: {e}")
+        raise
