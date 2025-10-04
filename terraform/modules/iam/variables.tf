@@ -14,6 +14,11 @@ variable "iam_roles" {
     "roles/secretmanager.admin",
     "roles/storage.admin",
     "roles/cloudsql.admin",
-    "roles/pubsub.admin"
+    "roles/pubsub.admin",
+    "roles/cloudfunctions.admin",
+    "roles/cloudbuild.builds.builder",
+    "roles/run.sourceDeveloper",
+    "roles/serviceusage.serviceUsageConsumer",
+    "roles/iam.serviceAccountUser" 
   ]
 }

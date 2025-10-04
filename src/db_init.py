@@ -27,7 +27,9 @@ if __name__ == "__main__":
         "host": tf_outputs["db_host"]["value"],
         "dbname": os.getenv("PG_DATABASE", "postgres"),
         "user": tf_outputs["db_service_account_name"]["value"],
-        "password": utils.get_secret(gcp_project_id, "postgres-service-account-pwd--dev"),
+        "password": utils.get_secret(
+            gcp_project_id, "postgres-service-account-pwd--dev"
+        ),
         "port": os.getenv("PG_PORT", "5432"),
     }
 

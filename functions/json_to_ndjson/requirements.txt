@@ -1,0 +1,9 @@
+colorlog==6.9.0
+google==3.0.0
+google-api-core==2.25.1
+google-cloud==0.34.0
+google-cloud-core==2.4.3
+google-cloud-logging==3.12.1
+google-cloud-pubsub==2.31.1
+google-cloud-storage==3.4.0
+typing-extensions==4.15.0

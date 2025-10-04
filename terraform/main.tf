@@ -59,3 +59,8 @@ module "pubsub" {
   publisher_service_account = module.iam.service_account_email
   env                       = local.env
 }
+
+module "bigqueza" {
+  source = "./modules/bigquery"
+  tags = local.global_tags
+}
