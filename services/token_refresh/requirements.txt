@@ -1,0 +1,10 @@
+colorlog==6.9.0
+gcloud==0.18.3
+google==3.0.0
+google-api-core==2.25.1
+google-cloud==0.34.0
+google-cloud-core==2.4.3
+google-cloud-logging==3.12.1
+google-cloud-secret-manager==2.24.0
+requests==2.32.5
+
